@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .head {
+      animation: flicker 1.5s infinite alternate;
+      color: white;
+      margin-top: 7vh;
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 400;
+    }
+
+    /* FLIKER ANIMATION */
+    @keyframes flicker {
+
+      0%,
+      18%,
+      22%,
+      25%,
+      53%,
+      57%,
+      100% {
+
+        text-shadow:
+          0 0 4px #fff,
+          0 0 11px #fff,
+          0 0 19px #fff,
+          0 0 40px red,
+          0 0 80px red,
+          0 0 90px red,
+          0 0 100px red,
+          0 0 150px red;
+
+      }
+
+      20%,
+      24%,
+      55% {
+        text-shadow: none;
+      }
+    }
+
+    body {
+      font-family: "Helvetica Neue";
+      background-image: url(https://i.pinimg.com/originals/4b/26/1f/4b261f5fe2a4dbb63e7db5a40622dc99.gif);
+      background-repeat: no-repeat;
+      background-size: cover;
+      align-item: center;
+    }
+
+    .sign {
+      margin-top: 2vh;
+      height: 10cm;
+      width: 10cm;
+      margin-left: 30vh;
+
+
+    }
+
+    .text {
+      width: 100%;
+      height: 6vh;
+      color: #fff;
+    }
+
+    button {
+      margin-left: 80vh;
+      padding: 12px 20px;
+      background: #0ea4da;
+      border: 0;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    #ans {
+      width: 100%;
+      text-align: center;
+      height: 200px;
+      border-radius: 10px;
+      resize: none;
+      padding: 10 px;
+      font-size: 20px;
+      margin-bottom: 10px;
+      background-color: gray;
+      text-color: white;
+    }
+
+    form {
+      margin-top: 2vh;
+    }
+
+    .text h1 {}
+
+    select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px dashed blue;
+      border-radius: 10px;
+      background-color:#b3003b;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="note"><center><p color="white">*Scroll down to Select language before start test</p></center></div>
+  <DIV class="head">
+    <h1>VERSANT TEST </h1>
+    <button id="button">Click here to start</button>
+  </DIV>
+  <div class="sign"><img src="welcome.png" id="image" class="sign"></div>
+  <div class="text">
+    <h1>After completion of test Scroll down to check my answers </h1>
+  </div>
+  <form>
+    <select></select>
+    <textarea id="ans"></textarea>
+    <button type="button">Stop</button>
+  </form>
+  <script>
+    var image = document.getElementById('image');
+    let images = ['img1.png', 'img2.png'];
+    let count = 0;
+    let change = 0;
+    let spr = 0;
+    alert("you want to start test")
+    button.addEventListener('click', function () {
+      image.src = "img1.png"
+      // image motion function 
+      setInterval(function () {
+        if (change == 0) {
+          change = 1;
+        }
+        else {
+          change = 0
+        }
+        image.src = images[change]
+        spr = 1;
+      }, 10000);
+    })
+    // speech recognition 
+    let form = document.querySelector("form");
+    let sr = window.webkitSpeechRecognition || window.SpeechRecognition;
+    let spRec = new sr();
+    spRec.lang = "en";
+    spRec.continuous = true;
+    spRec.interimResults = true;
+    // console.log(spRec);
+    button.addEventListener("click", e => {
+      //e.preventDefault();
+      spRec.start();
+    })
+    spRec.onresult = res => {
+      let text = Array.from(res.results)
+        .map(r => r[0])
+        .map(txt => txt.transcript)
+        .join("");
+      form[1].value = text;
+      // console.log(text);
+    }
+    form[2].addEventListener("click", () => {
+      spRec.stop()
+    })
+    // text to voice
+    let voices;
+
+                // TYPE    QUESTIONS        HERE 
+    
+
+
+
+
+
+
+    
+    
+    let arr = ["you must submit your project on time", "you must respect your coulege ", "share your thoughts with others  "]
+
+
+
+
+
+
+
+
+
+    
+    
+    let form1 = document.forms[0];
+    if ("speechSynthesis" in window) {
+      speechSynthesis.onvoiceschanged = () => {
+
+        voices = speechSynthesis.getVoices();
+        voices.map(voice => {
+          form1[0].innerHTML += `
+                    <option>${voice.name}</option>
+                    `;
+        })
+
+        console.log(voices);
+      }
+      button.addEventListener("click", e => {
+        e.preventDefault()
+        let selected = form1[0].querySelector("option:checked").value;
+        let t2s = new SpeechSynthesisUtterance();
+        var n = 1;
+        let voice = voices.filter(v => {
+          return v.name == selected;
+        })
+        t2s.voice = voice[0];
+        speechSynthesis.cancel();
+        t2s.text = arr[0];
+        speechSynthesis.speak(t2s)
+                  setInterval(() => {
+          t2s.text = arr[n];
+
+          speechSynthesis.speak(t2s)
+          n = n + 1
+          if (n == 3) {
+            n = 0;
+          }
+        }, 20000);
+
+      })
+
+    }
+
+  </script>
+
+</body>
+
+</html>
